@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>드론 지도 오버레이</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+      html, body, #map {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBcADGB8uYd9vsV1aM_ayZJDqiTx0afWGc"></script>
+    <script>
+      function initMap() {
+        const map = new google.maps.Map(document.getElementById('map'), {
+          center: { lat: 47.13564, lng: 107.11956 },
+          zoom: 15,
+          mapTypeId: 'satellite'
+        });
+
+        const droneOverlay = new google.maps.ImageMapType({
+          getTileUrl: function(coord, zoom) {
+            const maxZoom = 19;
+            const minZoom = 14;
+            if (zoom < minZoom || zoom > maxZoom) return null;
+
+            const yInverted = Math.pow(2, zoom) - coord.y - 1;
+            return zoom + "/" + coord.x + "/" + yInverted + ".png";
+          },
+          tileSize: new google.maps.Size(256, 256),
+          opacity: 1.0,
+          name: "Drone Overlay",
+          isPng: true
+        });
+
+        map.overlayMapTypes.insertAt(0, droneOverlay);
+      }
+    </script>
+  </head>
+  <body onload="initMap()">
+    <div id="map"></div>
+  </body>
+</html>
